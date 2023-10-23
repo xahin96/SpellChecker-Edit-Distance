@@ -7,15 +7,16 @@ import java.io.IOException;
 
 public class SpellChecker
 {
-
+    // A list to store the words in the dictionary
     private static List<String> dictionary = new ArrayList<>();
 
-    // Load words from a text file and populate the dictionary
+    // Reads and stores all the words provided in the dictionary.txt file in a list
     private static void populateDictionary()
     {
         try (BufferedReader reader = new BufferedReader(new FileReader("dictionary.txt")))
         {
             String line;
+            // Read words from the file and add them to the dictionary list
             while ((line = reader.readLine()) != null)
             {
                 dictionary.add(line.trim());
@@ -27,7 +28,7 @@ public class SpellChecker
         }
     }
 
-    // Calculate the Edit Distance between two strings
+    // Edit Distance method for calculating the distance between two strings
     private static int calculateEditDistance(String s1, String s2)
     {
         int m = s1.length();
@@ -82,6 +83,7 @@ public class SpellChecker
 
         Scanner scanner = new Scanner(System.in);
 
+        // Display a welcome message
         System.out.println("   _____            ____   ________              __            ");
         System.out.println("  / ___/____  ___  / / /  / ____/ /_  ___  _____/ /_____  _____");
         System.out.println("  \\__ \\/ __ \\/ _ \\/ / /  / /   / __ \\/ _ \\/ ___/ //_/ _ \\/ ___/");
@@ -90,13 +92,15 @@ public class SpellChecker
         System.out.println("    /_/                                                        ");
         System.out.print("~Welcome to the Spell Checker! Start writing to check your spelling game.~ \n\n");
 
+        // Displaying the list of words available in the dictionary
         System.out.println("Words available in the dictionary:");
         for (String word : dictionary)
         {
-            System.out.println(word);
+            System.out.println("- " +word);
         }
         while (true)
         {
+            // Prompting the user for entering a word
             System.out.print("\nEnter a misspelled word to check its spelling (or 'exit' to quit): ");
 
             // Receiving user input
@@ -112,7 +116,7 @@ public class SpellChecker
             // The higher the number, the more accurate match is being searched
             int maxDistanceThreshold = 3;
 
-            // Suggest up to 3 matches
+            // Suggesting up to 3 matches
             int maxMatches = 3;
 
             if (dictionary.contains(userInput))
