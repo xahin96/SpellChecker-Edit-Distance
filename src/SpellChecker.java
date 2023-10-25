@@ -7,67 +7,67 @@ import java.io.IOException;
 
 public class SpellChecker
 {
-    // A list to store the words in the dictionary
-    private static List<String> dictionary = new ArrayList<>();
+    // A list for storing data fetched from txt
+    private static List<String> dataDict = new ArrayList<>();
 
     // Reads and stores all the words provided in the dictionary.txt file in a list
     private static void populateDictionary()
     {
-        try (BufferedReader reader = new BufferedReader(new FileReader("dictionary.txt")))
+        try (BufferedReader dataReader = new BufferedReader(new FileReader("dictionary.txt")))
         {
-            String line;
-            // Read words from the file and add them to the dictionary list
-            while ((line = reader.readLine()) != null)
+            String eachLine;
+            // Reading line by line for storing them into the list
+            while ((eachLine = dataReader.readLine()) != null)
             {
-                dictionary.add(line.trim());
+                dataDict.add(eachLine.trim());
             }
         }
-        catch (IOException e)
+        catch (IOException ex)
         {
             System.out.println("Failed to read dictionary file.");
         }
     }
 
     // Edit Distance method for calculating the distance between two strings
-    private static int calculateEditDistance(String s1, String s2)
+    private static int calculateEditDistance(String str1, String str2)
     {
-        int m = s1.length();
-        int n = s2.length();
-        int[][] dp = new int[m + 1][n + 1];
+        int first = str1.length();
+        int second = str2.length();
+        int[][] dynaPro = new int[first + 1][second + 1];
 
-        for (int i = 0; i <= m; i++)
+        for (int firstLoop = 0; firstLoop <= first; firstLoop++)
         {
-            for (int j = 0; j <= n; j++)
+            for (int secondLoop = 0; secondLoop <= second; secondLoop++)
             {
-                if (i == 0)
+                if (firstLoop == 0)
                 {
-                    dp[i][j] = j;
+                    dynaPro[firstLoop][secondLoop] = secondLoop;
                 }
-                else if (j == 0)
+                else if (secondLoop == 0)
                 {
-                    dp[i][j] = i;
+                    dynaPro[firstLoop][secondLoop] = firstLoop;
                 }
                 else
                 {
-                    int substitutionCost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
-                    dp[i][j] = Math.min(Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1), dp[i - 1][j - 1] + substitutionCost);
+                    int substitutionCost = (str1.charAt(firstLoop - 1) == str2.charAt(secondLoop - 1)) ? 0 : 1;
+                    dynaPro[firstLoop][secondLoop] = Math.min(Math.min(dynaPro[firstLoop - 1][secondLoop] + 1, dynaPro[firstLoop][secondLoop - 1] + 1), dynaPro[firstLoop - 1][secondLoop - 1] + substitutionCost);
                 }
             }
         }
-        return dp[m][n];
+        return dynaPro[first][second];
     }
 
     // Find and suggest up to 3 matching words
-    private static List<String> findClosestMatchingWords(String input, List<String> dictionary, int maxDistanceThreshold, int maxMatches)
+    private static List<String> searchMatchingWords(String incomingStr, List<String> dict, int thresMaxDist, int matchesMax)
     {
         List<String> matchedWords = new ArrayList<>();
-        for (String word : dictionary)
+        for (String eachWord : dict)
         {
-            int distance = calculateEditDistance(input, word);
-            if (distance <= maxDistanceThreshold)
+            int calculatedDist = calculateEditDistance(incomingStr, eachWord);
+            if (calculatedDist <= thresMaxDist)
             {
-                matchedWords.add(word);
-                if (matchedWords.size() >= maxMatches)
+                matchedWords.add(eachWord);
+                if (matchedWords.size() >= matchesMax)
                 {
                     break;
                 }
@@ -83,20 +83,19 @@ public class SpellChecker
 
         Scanner scanner = new Scanner(System.in);
 
-        // Display a welcome message
-        System.out.println("   _____            ____   ________              __            ");
-        System.out.println("  / ___/____  ___  / / /  / ____/ /_  ___  _____/ /_____  _____");
-        System.out.println("  \\__ \\/ __ \\/ _ \\/ / /  / /   / __ \\/ _ \\/ ___/ //_/ _ \\/ ___/");
-        System.out.println(" ___/ / /_/ /  __/ / /  / /___/ / / /  __/ /__/ ,< /  __/ /    ");
-        System.out.println("/____/ .___/\\___/_/_/   \\____/_/ /_/\\___/\\___/_/|_|\\___/_/     ");
-        System.out.println("    /_/                                                        ");
-        System.out.print("~Welcome to the Spell Checker! Start writing to check your spelling game.~ \n\n");
+        System.out.println("███████ ██████  ███████ ██      ██           ██████ ██   ██ ███████  ██████ ██   ██ ███████ ██████      ██████  ");
+        System.out.println("██      ██   ██ ██      ██      ██          ██      ██   ██ ██      ██      ██  ██  ██      ██   ██          ██ ");
+        System.out.println("███████ ██████  █████   ██      ██          ██      ███████ █████   ██      █████   █████   ██████       █████  ");
+        System.out.println("     ██ ██      ██      ██      ██          ██      ██   ██ ██      ██      ██  ██  ██      ██   ██     ██      ");
+        System.out.println("███████ ██      ███████ ███████ ███████      ██████ ██   ██ ███████  ██████ ██   ██ ███████ ██   ██     ███████ ");
+        System.out.print("\n~Welcome to the Spell Checker! Start writing to check your spelling game.~ \n\n");
+
 
         // Displaying the list of words available in the dictionary
-        System.out.println("Words available in the dictionary:");
-        for (String word : dictionary)
+        System.out.println("Current Words:");
+        for (String eachWord : dataDict)
         {
-            System.out.println("- " +word);
+            System.out.println("- " +eachWord);
         }
         while (true)
         {
@@ -108,24 +107,24 @@ public class SpellChecker
 
             if (userInput.equals("exit"))
             {
-                System.out.print("Thank you for using Spell Checker! Goodbye :)");
+                System.out.print("Thanks. See you soon :)");
                 break;
             }
 
-            // Edit distance accuracy threshold parameter.
-            // The higher the number, the more accurate match is being searched
-            int maxDistanceThreshold = 3;
+            // This is the edit distance accuracy threshold param.
+            // A higher value allows more leniency in matching.
+            int thresMaxDist = 3;
 
             // Suggesting up to 3 matches
             int maxMatches = 3;
 
-            if (dictionary.contains(userInput))
+            if (dataDict.contains(userInput))
             {
                 System.out.println("The word '" + userInput + "' is correct.\n");
             }
             else
             {
-                List<String> matchedWords = findClosestMatchingWords(userInput, dictionary, maxDistanceThreshold, maxMatches);
+                List<String> matchedWords = searchMatchingWords(userInput, dataDict, thresMaxDist, maxMatches);
 
                 System.out.println("The word '" + userInput + "' was not found in the dictionary.");
                 if (!matchedWords.isEmpty())
